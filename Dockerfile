@@ -11,10 +11,6 @@ RUN npm install
 ## Copy the rest of the code
 COPY . .
 
-# Inject environment variables [this for docker compose]
-#ARG REACT_APP_API_BASE_URL
-#ENV REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
-
 
 ## Create a production build
 RUN npm run build
