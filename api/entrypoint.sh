@@ -1,2 +1,8 @@
-#!/bin/bash
-node dist/server.js
+#!/bin/sh
+
+# Run Prisma migrations
+npx prisma migrate dev
+
+# Start the app
+npm run start
+
