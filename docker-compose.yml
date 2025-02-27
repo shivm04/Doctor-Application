@@ -1,15 +1,52 @@
-version: '3'
-services:
-  backend:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-    ports:
-      - '5050:5050'
+version: '3.8'
 
+services:
+  # Frontend Service
   frontend:
+    container_name: doctor-frontend
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '3000:3000'
+      - "3000:80"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_BASE_URL=http://doctor-backend:5050/api/v1
+    networks:
+      - app-network
+
+  # Backend Service
+  backend:
+    container_name: doctor-backend
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgres://user:pass@doctor-db:5432/doctor
+    ports:
+      - "5050:5050"
+    depends_on:
+      - doctor-db
+    networks:
+      - app-network
+
+  # PostgreSQL Database Service
+  doctor-db:
+    image: postgres:alpine
+    container_name: doctor-db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=doctor
+    volumes:
+      - /home/shivam/postgresql:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
